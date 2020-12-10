@@ -24,9 +24,6 @@ avatar: /assets/img/avatar.jpeg   # support internet resources
 github:
   username: fransoaardi             # change to your github username
 
-twitter:
-  username: twitter_username            # change to your twitter username
-
 social:
   name: fransoaardi                  # it will shows as the copyright owner in Footer
   email: fransoaardi@gmail.com             # change to your email address
