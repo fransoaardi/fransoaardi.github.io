@@ -15,10 +15,10 @@ _no_branch=false
 _backup_dir="$(mktemp -d)"
 
 init() {
-  if [[ -z ${GITHUB_ACTION+x} ]]; then
-    echo "ERROR: This script is not allowed to run outside of GitHub Action."
-    exit -1
-  fi
+#  if [[ -z ${GITHUB_ACTION+x} ]]; then
+#    echo "ERROR: This script is not allowed to run outside of GitHub Action."
+#    exit -1
+#  fi
 
   # Gemfile could be changed by `bundle install` in actions workflow
   if [[ -n $(git status Gemfile.lock --porcelain) ]]; then
@@ -31,6 +31,8 @@ init() {
   else
     git checkout "$PAGES_BRANCH"
   fi
+
+  ./build.sh
 }
 
 backup() {
@@ -58,7 +60,7 @@ deploy() {
 
   git update-ref -d HEAD
   git add -A
-  git commit -m "[Automation] Site update No.${GITHUB_RUN_NUMBER}"
+  git commit -m "[Automation] Site update $(date) "
 
   if $_no_branch; then
     git push -u origin "$PAGES_BRANCH"
