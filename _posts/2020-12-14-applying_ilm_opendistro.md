@@ -1,6 +1,6 @@
 ---
 layout: post
-title: applying ilm on opendistro
+title: opendistro index lifecycle management(ilm) 적용하기
 date: 2020-12-14 14:00:00 +0900
 categories: [Wiki]
 tags: [elk, aws]
@@ -10,7 +10,7 @@ toc: true
 # introduction
 - 본 글은 opendistro 에 ilm rule 적용을 다룬다.
 
-- AWS elasticsearch SaaS(Service as a service) 를 사용하는데, 사실 aws opendistro 는 elastic 의 kibana 와는 갈래가 나뉘었다. 
+- AWS elasticsearch service SaaS(Service as a service) 를 사용하는데, 사실 aws opendistro 는 elastic 의 kibana 와는 갈래가 나뉘었다. 
 
 > 전쟁의 서막
 - [elastic 의 발표](https://www.elastic.co/kr/blog/on-open-distros-open-source-and-building-a-company)
@@ -25,12 +25,13 @@ toc: true
 
 # environment
 - index template 를 미리 생성해놓았다.
-- k8s 에서 발생하는 로그를 fluentbit 를 이용해서 daily 로 `log-index-2020.12.14` 같은 패턴으로 index 를 생성하는데, 00시 기준 처음 들어온 raw_data 기준으로 새로운 index 가 생성된다. es(elasticsearch) 는 새로 들어온 데이터를 기준으로 template 에 정의된 mapping을 따르고, 나머지 필드에 대해서는 dynamic mapping 이 된다. 
+- k8s 에서 발생하는 로그를 fluentbit 를 이용해서 daily 로 `log-index-YYYY.MM.DD` 패턴으로 index 를 생성하는데, 00시 기준 처음 들어온 raw_data 기준으로 새로운 index 가 생성된다. es(elasticsearch) 는 새로 들어온 데이터를 기준으로 template 에 정의된 mapping을 따르고, 나머지 필드에 대해서는 dynamic mapping 이 된다. 
+- 매일 생성된 index 가 3달치 가까이 쌓여있고, 이를 일정 주기마다 지우려고 한다.
 
 # progress
 ## ilm creation
 - ilm 은 `hot`, `warm`, `delete` 3가지 state 를 가질 수 있는, FSM(finite state machine) 형태로 정의할수있다.
-- data access 를 효율적으로 하기위해 hot/warm 등으로 분리하려는 의도보다는 생성된지 30일(임의 설정 값)이 지난 index 들을 delete 하기 위한 의도로 사용하는것이라 아래와 같이 state 를 `"hot"`, `"delete"` 만 정의하였다.
+- data access 를 효율적으로 하기위해 `"hot"`/`"warm"` 등으로 분리하려는 의도보다는 생성된지 30일(임의 설정 값)이 지난 index 들을 delete 하기 위한 의도로 사용하는것이라 아래와 같이 state 를 `"hot"`, `"delete"` 만 정의하였다.
 
 - policy 생성 json
 > 
@@ -40,26 +41,22 @@ toc: true
     "description": "delete an index after 30 days",
     "default_state": "hot",
     "schema_version": 1,
-    "states": [
-      {
-        "name": "hot",
-        "actions": [],
-        "transitions": [
-          {
-            "state_name": "delete",
-            "conditions": {
+    "states": [{
+      "name": "hot",
+      "actions": [],
+      "transitions": [{
+          "state_name": "delete",
+          "conditions": {
               "min_index_age": "30d"
-            }
           }
-        ]
-      },
-      {
+      }]
+    },
+    {
         "name": "delete",
         "actions": [{
             "delete": {}
         }]
-      }
-    ]
+    }]
   }
 }
 ``` 
@@ -80,18 +77,17 @@ PUT _template/your-index
 ## 미리 생성된 index 에 policy 적용
 - 미리 생성된 index 는 policy 가 적용되어있지 않고, checkbox 선택 후, 직접 index policy 적용이 필요하다.
 
-- 적용 전
+- 적용 전 (Managed by Policy 값이 No 이다)
 
-![indices not managed by ilm](/assets/img/posts/2020-12-14-ilm/indices-not-managed.png){: width="350" class="normal"}
+![indices not managed by ilm](/assets/img/posts/2020-12-14-ilm/indices-not-managed.png)
 
-- 적용 후
+- 적용 후 (Managed by Policy 값이 Yes 이다)
 
-![indices managed by ilm](/assets/img/posts/2020-12-14-ilm/indices-managed.png){: width="350" class="normal"}
+![indices managed by ilm](/assets/img/posts/2020-12-14-ilm/indices-managed.png)
 
-- `hot -> delete` transition 이 일어난 index
+- `hot -> delete` transition 이 일어난 index (State 가 `delete` 로 변경됐다, 이후 제거됐다)
 
-![indices in transition by ilm](/assets/img/posts/2020-12-14-ilm/indices-in-transition.png){: width="350" class="normal"}
-
+![indices in transition by ilm](/assets/img/posts/2020-12-14-ilm/indices-in-transition.png)
 
 # references
 > `elastic` vs `aws` 전쟁의 서막
