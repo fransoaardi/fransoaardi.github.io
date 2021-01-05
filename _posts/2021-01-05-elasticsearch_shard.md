@@ -82,7 +82,7 @@ metricbeat-7.6.2-2020.10.18-000013    0     r      UNASSIGNED
 ```
 
 - 이미 생성된 indices 는 30일 이후에 ilm 에 의해 index 삭제가 진행되며 shard 가 정리되길 기대하기로 했다.
-- 앞으로 생성될 indices 가 적용될 _template 설정을 아래 부분을 추가해서 적용했다.
+- 앞으로 생성될 indices 가 적용될 _template 설정에 아래 부분을 추가해서 적용해서, shard 가 1 index 에 2개(primary:1, replica:1) 씩 설정될 것이다.
 
 ```
 PUT _template/index-here
@@ -108,9 +108,60 @@ d: 1 이었는데, 3으로 늘림
 
 - a 는 시간이 지날수록 늘어날 것이고, b 와 c 는 reliability & availability 를 위해 조정할 수 있을텐데 AWS 의 managed service 를 이용하는 이상 d 를 편하게 늘릴 수 있어서 크게 신경쓰진 않기로했다. 
 
-# further progress
+# further readings
 - index 구성에 있어, 적당한 shard 의 사이즈는 분명 튜닝포인트가 될 만하다.
 - 우선은 daily index 를 구성하는 document 수, document size 가 전혀 위협적이지 않아, 1개의 shard 로 충분할 것이고, 많은 shard 유지는 타당하지 않아보였다.
+
+- 아래와 같이, 다양한 API 를 제공한다 (`_cat` 은 `v` param 으로 verbose 한 결과를 얻을 수 있다)
+
+```
+# index 의 shard 할당 확인과 shard 현황을 확인해 볼 수 있는 api
+
+$ GET /index-here-*/_stats?level=shards
+$ GET /_cat/shards/index-here-*?v
+```
+
+- 위의 unassigned 된, allocation 이 실패한 이유를, 아래와 같이 Dev Console 에 query 해서 확인해볼 수 있다.
+  - `"explanation" : "the shard cannot be allocated to the same node on which a copy of the shard already exists`
+
+```
+$ GET /_cluster/allocation/explain
+
+{
+  "index" : "index-here-log-2020.12.23",
+  "shard" : 0,
+  "primary" : false,
+  "current_state" : "unassigned",
+  "unassigned_info" : {
+    "reason" : "INDEX_CREATED",
+    "at" : "2020-12-31T05:23:44.827Z",
+    "last_allocation_status" : "no_attempt"
+  },
+  "can_allocate" : "no",
+  "allocate_explanation" : "cannot allocate because allocation is not permitted to any of the nodes",
+  "node_allocation_decisions" : [
+    {
+      "node_id" : "OenW3BKCQgy5R1lQbz72aQ",
+      "node_name" : "node-name-here",
+      "transport_address" : "123.45.123.12:9300",
+      "node_attributes" : {
+        "ml.machine_memory" : "8362352640",
+        "xpack.installed" : "true",
+        "ml.max_open_jobs" : "20"
+      },
+      "node_decision" : "no",
+      "weight_ranking" : 1,
+      "deciders" : [
+        {
+          "decider" : "same_shard",
+          "decision" : "NO",
+          "explanation" : "the shard cannot be allocated to the same node on which a copy of the shard already exists [[index-here-log-2020.12.23][0], node[OenW3BKCQgy5R1lQbz72aQ], [P], s[STARTED], a[id=p-DkN6gJQue0iFJXu-F5dA]]"
+        }
+      ]
+    }
+  ]
+}
+```
 
 # references
 - elastic 의 에반젤리스트인 김종민님의 블로그 중 shard 관련 부분
