@@ -15,6 +15,7 @@ toc: true
 ## defer 170p
 
 - `defer` 는 `func()` 를 우측에 명시해야되는데, closure 처럼 func return 으로 trace 를 간편히 표현할 수 있었다.
+
 ```golang
 func bigSlowOperation(){
     defer trace("bigSlowOperation")() // () 를 뒤에 붙여, 일단 trace() 실행 하고, 
