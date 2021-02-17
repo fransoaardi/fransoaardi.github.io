@@ -25,9 +25,7 @@ toc: true
 
 ## 데이터 획득
 
-- 구글링을 조금 해보니, 특이하게 법정동/행정동 데이터를 행정안전부의 `주민등록,인감,행정사` 부분에서 데이터를 구할 수 있었다.
-
-링크: https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardArticle.do?bbsId=BBSMSTR_000000000052&nttId=82856
+- 구글링을 조금 해보니, 특이하게 법정동/행정동 데이터를 행정안전부의 `주민등록,인감,행정사` 부분에서 [데이터](https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardArticle.do?bbsId=BBSMSTR_000000000052&nttId=82856)를 구할 수 있었다.
 
 - 말소코드가 포함된 데이터도 있지만, 말소된 지역명을 사용하진 않을 계획이라, `jscode20210219.zip` 데이터를 받아서 첨부된 excel 파일을 이용하기로 했다. (`KIKmix.20210219.xlsx`)
 
@@ -68,7 +66,7 @@ print(set([v[-1] for v in dl])) # '군', '동', ')', '구', '리', '시', '로',
     
 - 혹시나, `동리명`이 `읍 or 면` 으로 끝나는 경우, `읍면동`명과 값이 다른 필드가 있을까 하여 확인해봤는데, 다행히 그렇지 않았다.
 
-```python3
+```python
 print('행/법 다른 면', raw[(raw['읍면동명'].str.endswith('면')) &
                 (raw['읍면동명'] != raw['동리명']) &
                 (raw['동리명'].str.endswith('면'))])
@@ -144,7 +142,7 @@ print('행/법 다른 읍', raw[(raw['읍면동명'].str.endswith('읍')) &
 
 - synonym, user_dictionary 설정에 대한 내용은 elasticsearch 의 document 를 참고하면 된다.
 - synonym, user_dictionary 를 사용한 이유는, 위에서 가공한 데이터는 '서울특별시' 와 같이 정형화된 데이터였고, 이를 tokenizer 가 `'서울'+'특별시'` 로 나누게 될 것이기 때문이다.
-- 추가로, synonym 설정을 `"서울특별시, 서울"` 와 같이 한다면, `서울특별시` 가 합성어이고, 합성어중 하나인 `서울` 까지 synonym 으로 등록을 하면 error 가 발생되는 issue 가 github 에 등록되어있다. (봤던 이슈인데, 현재 링크를 찾지못했다)
+- 추가로, synonym 설정을 `"서울특별시, 서울"` 와 같이 한다면, `서울특별시` 가 합성어이고, 합성어중 하나인 `서울` 까지 synonym 으로 등록을 하면 error 가 발생되는 [issue](https://github.com/elastic/elasticsearch/issues/37751) 가 github 에 등록되어있다.
 - 이 에러를 우회하는 방법으로, user_dictionary 에 등록해서 tokenize 하지 않도록 처리했다.
 - 아래는 `"제주특별자치도, 제주, 제주도"` 를 등록할때의 문제가 발생한 로그이다.
 
@@ -189,7 +187,7 @@ bulk(es, documents, index='hb_search', doc_type='_doc', raise_on_error=True)
 
 - 참고: [multi-match 관련 es document](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html)
 
-```python3
+```python
 es = Elasticsearch(hosts=['es.host.address:9200'])  # es server
 
 d = {
@@ -728,3 +726,10 @@ ES_PATH_CONF=/etc/elasticsearch
     }
 }
 ```
+
+# references
+
+- [김종민님의 document](https://esbook.kimjmin.net/06-text-analysis/6.2-text-analysis)
+- [행정동/법정동 데이터](https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardArticle.do?bbsId=BBSMSTR_000000000052&nttId=82856)
+- [지하철 노선 관련 한글 형태소분석 글](http://kimjmin.net/2019/08/2019-08-how-to-analyze-korean/)
+- [nori tokenizer 사용시 발생한 issue](https://github.com/elastic/elasticsearch/issues/37751)
