@@ -1,0 +1,54 @@
+번역앱의 가격은 얼마일까?
+
+1. kafka: 254 $ /month
+2. redis: 15 노드 중 9개 노드 사용 (3/5)
+    2890 $ * (3/5) = 1,734 $
+3. rdb(postgres): 1,307 $
+4. EC2: t3.xlarge * 3  (release) + t3.medium * 3 (dev)
+0.208($/hr) * 720(hr) * 3 +
+0.052($/hr) * 720(hr) * 3 +
+= 561 $
+(ocr 은 선점형 instance 라서 제외)
+
+5. elastic search: 1,322 $ * (3/8) = 495.75
+6. EKS control plane 사용: 
+0.1($/hr) * 720(hr) * 3(cluster: dev/prod/ocr) = 216$
+7. ELB(loadbalancer) (확인이 더 필요함)
+----
+
+숨만쉬어도 4,567$ 548 만원
+
+800 -> 2/5 = 320
+
+
+
+
+---
+- istio 쓸때 clb, nlb 둘다 생기는데, clb 냅둘필요 있을까? (유지비용이 좀 되는것같음)
+- EBS는 축소는 안되고, 확대만 가능함
+    - 기억에 확대하면 바로 적용 안되고, fs 새로 잡아야됐던것같은데
+
+
+---
+344line http/client.go
+
+func setRequestCancel(req *Request, rt RoundTripper, deadline time.Time) (stopTimer func(), didTimeout func() bool) {
+
+
+> 188line http/client.go
+deadline 은 client.Timeout 값을 client.Do 호출된 시간에 더한 값이다. 
+client.Timeout 값이 없었다면 zero Time 을 return 했다.
+
+354line 에서 deadline 이 oldCtx 의 timeout 보다 크면, 아무것도 하지 않는다.
+deadline 이 oldCtx 보다 이른 경우에, 359line 에서 request 의 context 에 timeout 설정하고, stopTimer, didTimeout 세팅해서 return 한다.
+
+
+451line context.go 에서 c.timer 에 duration 이후에 DeadlineExceeded error 를 발생시키고, parent 로 부터 context 를 분리하는 
+
+492line transport.go 에서 roundTrip 실행
+
+curl -XPOST \
+'gateway-release.airlab.xyz:9000/api' \
+-H 'Content-Type: application/json' \
+-d '{ "metadata": { "userId": "@testsampleuser", "deviceId": "@testsampledevice", "session": { "id": "@testsample", "seq": 1 }, "context": { "environment": { "location.latitude": 37.497980, "location.longitude": 127.027560, "temperature.outside": -1.3, "temperature.inside": 18.0 }, "vehicle": { "seat.frontLeft.isOccupied": true, "seat.frontLeft.isVentilating": true, "seat.frontRight.isOccupied": false, "heat.temperature": 24, "heat.windBlow": 3 }, "user": { "status.isSleeping": true, "status.isDriving": true }, "universalControllers": [ { "running": false, "controller": "screen_controller", "horizontalScroll": true, "id": "RouteGuide_Selection_Vscroll", "verticalScroll": false } ] } }, "inputs": [{ "type": "ASR", "rawMessages": [{ "provider": "google", "transcript": "겨울철 적정 타이어 공기압은?", "confidence": 0.9236 }] }] }'
+
