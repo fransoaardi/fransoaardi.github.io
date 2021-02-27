@@ -5,6 +5,7 @@ date: 2020-12-14 14:00:00 +0900
 categories: [Wiki]
 tags: [elk, aws]
 toc: true
+comments: true
 ---
 
 # introduction

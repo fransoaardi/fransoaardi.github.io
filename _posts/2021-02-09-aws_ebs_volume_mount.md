@@ -5,6 +5,7 @@ date: 2021-02-09 17:30:00 +0900
 categories: [Wiki]
 tags: [aws]
 toc: true
+comments: true
 ---
 
 # introduction

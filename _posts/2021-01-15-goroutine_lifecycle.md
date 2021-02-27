@@ -5,6 +5,7 @@ date: 2021-01-15 14:29:00 +0900
 categories: [Wiki]
 tags: [golang]
 toc: true
+comments: true
 ---
 
 # introduction

@@ -5,6 +5,7 @@ date: 2021-01-05 01:50:00 +0900
 categories: [Wiki]
 tags: [elk, aws]
 toc: true
+comments: true
 ---
 
 # introduction

@@ -5,6 +5,7 @@ date: 2021-02-03 19:17:00 +0900
 categories: [Book]
 tags: [golang]
 toc: true
+comments: true
 ---
 
 - 너무나 좋은 내용이 많고, 얻은게 많은 책이라 기록을 남기기로 했다.
