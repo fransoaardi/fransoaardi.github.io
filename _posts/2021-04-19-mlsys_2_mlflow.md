@@ -27,7 +27,6 @@ ml 은 전통적인 소프트웨어와는 다른 방식을 따른다.
 
 | # | traditional | ml |
 | --- |--- | --- |
-
 | goal | meet a functional specification | optimize a metric |
 | quality | depends only on app code | depends on input data and tuning parameters |
 | | pick one sw stack | compare & combine many libraries and algorithms for the same task |
