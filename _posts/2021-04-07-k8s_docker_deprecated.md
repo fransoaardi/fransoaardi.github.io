@@ -8,6 +8,11 @@ toc: true
 comments: true
 ---
 
+# changelog
+
+- 2021-04-07: 문서작성
+- 2021-04-22: deprecation 에 따른 fluentbit logging 영향도 분석내용 추가
+
 # introduction
 
 요 근래 medium 을 통해 추천되는 글들에, docker 를 대체할 container 기술들에 대한 이야기들이 많이 보였다. 물론, 거의 대부분의 경우 container 기술 이라는 표현 보다는 훨씬 더 많은 경우 docker 로 통칭되었다. 하지만, 다른 여러 글들을 읽다보니 이제는 docker 라고 부르기에는 입지가 점점 좁아지는건 아닌가 하는 생각이 들었다. 물론, docker 는 microsoft 와 2020 년 초에 partnership 을 맺어서 ms 의 어깨에 올라타긴 했지만...
@@ -56,7 +61,94 @@ docker 에는 문제가 있는데, k8s 에서 [CRI(container runtime interface)]
 
 1. docker 의 특수한 기능을 사용하는 경우 (docker configuration) 는 다른 runtime 과 호환이 되지 않을 수 있다.
 2. 회사에서 nvidia-docker 를 이용해서 GPU 를 사용하는 container 를 k8s 를 이용해서 실행하는 경우가 있는데, [nvidia 의 링크](https://developer.nvidia.com/nvidia-container-runtime) 중 `Supported Container Technologies` 에 `LXC` 와 `CRI-O` 가 적혀있긴 하지만, github 등을 참고했을때 nvidia 와 관련된 상세문서를 찾을 수 없었다. 호환이 될지 확인이 필요하다.
-3. [이 글](https://kubernetes.io/blog/2020/12/02/dockershim-faq/#what-should-i-look-out-for-when-changing-cri-implementations)에 runtime 을 CRI 구현체로 이전할때 체크리스트가 제공되는데, docker socket 을 사용하거나, logging configuration 관련된 내용은 체크하라고 한다. 회사에서 구현한 서비스에 로깅을 k8s daemonset 으로 fluentbit 를 실행하고 노드별로 pod 들에서 stdout 으로 발생시킨 로그들을 es 로 보내는 방식을 사용하고 있는데, docker 의 logging driver 를 사용하진 않았던 것으로 기억하지만 영향도 확인은 필요하다.
+3. [이 글](https://kubernetes.io/blog/2020/12/02/dockershim-faq/#what-should-i-look-out-for-when-changing-cri-implementations)에 runtime 을 CRI 구현체로 이전할때 체크리스트가 제공되는데, docker socket 을 사용하거나, logging configuration 관련된 내용은 체크하라고 한다. 회사에서 구현한 서비스에 로깅을 k8s daemonset 으로 fluentbit 를 실행하고 노드별로 pod 들에서 stdout 으로 발생시킨 로그들을 es 로 보내는 방식을 사용하고 있는데, ~~docker 의 logging driver 를 사용하진 않았던 것으로 기억하지만 영향도 확인은 필요하다.~~ 아래에 `fluentbit logging 확인` 부분에 정리해두었다.
+
+## fluentbit logging 확인
+
+위에서 언급했듯, k8s daemonset 으로 실행중인 fluentbit 의 설정은 docker runtime 의 dependency 가 있다.
+설정한 yaml 은 아래와 같다. 설명에 필요한 내용만 남겨서 이대로 사용하면 안된다.
+추가로, 아래는 `fluent/fluent-bit:1.5` 이미지를 사용했지만, `fluent/fluent-bit:1.5-debug` 를 사용하면 `kubectl exec` 으로 `sh` 을 실행해서 container 내부를 확인해볼 수 있기 때문에 디버깅하기 좋다.
+
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluent-bit
+  namespace: logging
+spec:
+  template:
+    spec:
+      containers:
+        - name: fluent-bit
+          image: fluent/fluent-bit:1.5
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+            - name: varlibdockercontainers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+            - name: fluent-bit-config
+              mountPath: /fluent-bit/etc/
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  namespace: logging
+data:
+  input-kubernetes.conf: |
+    [INPUT]
+        Name              tail
+        Tag               kube.*
+        Path              /var/log/containers/*.log
+        Parser            docker
+        DB                /var/log/flb_kube.db
+        Mem_Buf_Limit     5MB
+        Skip_Long_Lines   On
+        Refresh_Interval  10
+```
+
+위의 yaml 로 기대하는 바는, daemonset 으로 k8s cluster 의 node 들에 발생한 컨테이너 로그들을 한번에 취합해서 volume 으로 mount 하고, 이를 fluentbit 로 output 경로로 shipping 하는 것이다.
+`varlibdockercontainers` 라고 하는 부분이 문제의 경로인데, 이는 docker runtime 이 `/var/lib/docker/containers` 에 남기고 있고, OCI 스펙상으로는 `/var/log/` 에 남겨야 됐던것으로 추정된다(이 경로도 docker runtime 이 deprecated 되는데 한 몫 했을것이다). 예를들어 `cri-o` 의 경우 `/var/log/crio/pods` 에 로그를 남긴다고 한다. 
+
+[출처](https://github.com/cri-o/cri-o/blob/master/docs/crio.8.md)
+
+```
+--log-dir="": Default log directory where all logs will go unless directly specified by the kubelet (default: /var/log/crio/pods)
+```
+
+실제로 running 중인 k8s 에서 확인해보니 `/var/log/` 경로에는 `/var/log/containers`, `/var/log/pods` 가 있다.
+
+`/var/log/containers` 에는 말그대로 container 로그가, `/var/log/pods` 에는 pod 로그가 있는데, 흥미로운 것은, 예를들어서 `my-app` 이라는 pod(istio enable 한 application pod 이다) 에는 `my-app`, `istio-init`, `istio-proxy` 3개의 container 가 확인되고, 이 중 `istio-init` 은 initialize container 로 확인된다. `istio-proxy` 는 istio 에서 sidecar 로 동작하는 pod 이다. 
+```
+/var/log/pods/dev_my-app-6b547ccc47-5qnlm_3ba7281a-ac63-4c9b-8c0e-783a7118bc3f # ls
+my-app   istio-init   istio-proxy
+```
+
+> `/var/log/containers` 의 log 는 `/var/log/pods` 의 symbolic link 이다.
+```
+lrwxrwxrwx    1 root     root            73 Dec  7 01:59 nats-1_nats_nats-f060703184b3da27e885fdedd9fb018e999d2739a627fb0dcd7d3fca1602dbbb.log -> /var/log/pods/nats_nats-1_e615488d-8e60-4480-9725-b7656aa641d3/nats/0.log
+```
+
+> `/var/log/pods` 의 log 는 실제로 docker container log(`/var/lib/docker/containers`) 의 symbolic link 이다.
+```
+lrwxrwxrwx    1 root     root         165 Dec  5 12:27 2.log -> /var/lib/docker/containers/840163e6de15627586d7fc9f3d8f6aaebf2a2c32c3d5aef2088adc931a2a3cc1/840163e6de15627586d7fc9f3d8f6aaebf2a2c32c3d5aef2088adc931a2a3cc1-json.log
+lrwxrwxrwx    1 root     root         165 Apr 12 05:26 3.log -> /var/lib/docker/containers/21c509d0cd14a7ccb066bb231cca5a2d18f7ca94c8d541a3c6b68d6546b5ef48/21c509d0cd14a7ccb066bb231cca5a2d18f7ca94c8d541a3c6b68d6546b5ef48-json.log
+```
+
+즉, 위에 config 의 Path 에는 `varlog` 에 해당하는 경로인 `/var/log/containers/*.log` 가 설정되어 있었지만, 불필요해 보였던 mount path 인 `varlibdockercontainers` 실제로, symbolic link 를 처리하기 위해 필요한 경로였다.
+
+정리해보면, `varlibdockercontainers` 처럼 container runtime specific 한 경로의 log 가 `/var/log/containers`, `/var/log/pods` 의 symbolic link 로 적용될 텐데, docker 가 아닌, 새로 적용할 container runtime 에 맞게, Path 설정 잘 해서 mount 해주고 parser 설정만 runtime specific 하게 새로 정의해서 적용해주면 될 것으로 판단된다.
 
 # references
 
