@@ -70,6 +70,19 @@ comments: true
 
 - on device 에서 학습, 데이터를 보내지 않고, 학습된 벡터만 보냄
 
+- 개인적으로 재밌었던 내용이라, 몇가지 질문을 했다.
+- Q1: federated learning 을 할때 server 에 parent model 이 있을것이고, edge 에 child model 이 있을텐데, 학습된 child model 의 vector 값을 parent model 에 학습하는 경우에 비율은 어떻게 하는가?
+
+- A1: 실험을 통해서 변경하고 있고, 아직 정답을 찾진 못했다. 
+> 이후 슬라이드를 보니 0.95:0.05 와 같은.. heuristic 한 접근을 취하고 있었다
+
+- Q2: edge device 에서 model 학습 과정을 거칠텐데, edge device 의 배터리 사용량 증가되는 정도에 대한 실험결과가 있는지? 
+> 사용자의 동의를 받지 않았을것 같은 생각도 들었고, 법적인 것들도 물어보고 싶었지만 간접적으로 질문했다
+
+- A2: 학습이 그렇게 오래 걸리진 않고, cpu core 를 1개만 사용하도록 강제하였다. 
+> 학습 과정에서 리소스를 쥐어짜내는 방식은 아니었겠지만, 이 조차도 사용자 입장에서는(특히 배터리가 부족하다거나 하는) 알게되면 짜증나지 않을까 싶었다.
+
+
 ## NAVER Knowledge Graph Introduction (현동석 님)
 
 ```
