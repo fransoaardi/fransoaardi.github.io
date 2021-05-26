@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Uber go style guide (1)
-date: 2021-05-25 20:00:00 +0900
+date: 2021-05-26 00:30:00 +0900
 categories: [Wiki]
 tags: [golang, style-guide]
 toc: true
