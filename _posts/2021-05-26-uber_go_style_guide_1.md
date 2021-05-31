@@ -83,7 +83,7 @@ func (d *Driver) SetTrips(trips []Trip) {
 }
 ```
 
-map, slice 를 return 하는 경우에 원본을 내려준것과 동일하기 때문에, 아래의 예시에서 mutex 를 적용해놓은게 헛수고가 되어버린다. 
+map, slice 를 return 하는 경우에 원본을 내려준것과 동일하기 때문에 아래의 예시에서 기껏 `Stats` 에 mutex 를 적용해서 map access 에 대한 race condition 을 막기 위한 노력이 헛수고가 되어버린다. 물론 `Stats` 의  `counters` 의 data access 하는 부분의 코드는 아래에 제공되진 않았다.
 
 ```golang
 type Stats struct {
@@ -104,7 +104,7 @@ func (s *Stats) Snapshot() map[string]int {
 snapshot := stats.Snapshot()
 ```
 
-따라서 아래와 같이 map 을 새로 선언해서 복사해서 내려주도록 한다.
+따라서 아래와 같이 map 을 새로 선언해서 복사해서 내려주어서 이 map 에 대한 race condition 을 방지하는 access 는 `Stats` 의 mutex 가 아닌 다른 방식으로 직접 구현하도록 한다.
 
 ```golang
 func (s *Stats) Snapshot() map[string]int {
