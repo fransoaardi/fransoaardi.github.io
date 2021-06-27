@@ -1,0 +1,1093 @@
+<!DOCTYPE html><html lang="en" mode="dark" ><head> <script async src="https://www.googletagmanager.com/gtag/js?id=G-JGZJNRD2BC"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-JGZJNRD2BC'); </script> <script data-ad-client="ca-pub-4922381322503366" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="theme" content="Chirpy v2.6.2"><meta name="generator" content="Jekyll v4.1.1" /><meta property="og:title" content="elasticsearch 를 이용한 텍스트 기반 행정동/법정동 주소검색" /><meta name="author" content="fransoaardi" /><meta property="og:locale" content="en_US" /><meta name="description" content="introduction" /><meta property="og:description" content="introduction" /><link rel="canonical" href="https://fransoaardi.github.io/posts/address_search/" /><meta property="og:url" content="https://fransoaardi.github.io/posts/address_search/" /><meta property="og:site_name" content="wiki" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2021-02-17T10:44:00+09:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="elasticsearch 를 이용한 텍스트 기반 행정동/법정동 주소검색" /><meta name="google-site-verification" content="google_meta_tag_verification" /> <script type="application/ld+json"> {"author":{"@type":"Person","name":"fransoaardi"},"description":"introduction","url":"https://fransoaardi.github.io/posts/address_search/","@type":"BlogPosting","headline":"elasticsearch 를 이용한 텍스트 기반 행정동/법정동 주소검색","dateModified":"2021-02-27T14:58:12+09:00","datePublished":"2021-02-17T10:44:00+09:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://fransoaardi.github.io/posts/address_search/"},"@context":"https://schema.org"}</script><title>elasticsearch 를 이용한 텍스트 기반 행정동/법정동 주소검색 | wiki</title><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon"><link rel="icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon"><link rel="apple-touch-icon" href="/assets/img/favicons/apple-icon.png"><link rel="apple-touch-icon" href="/assets/img/favicons/apple-icon-precomposed.png"><link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicons/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicons/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicons/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicons/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicons/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicons/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicons/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicons/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicons/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicons/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/manifest.json"><meta name='msapplication-config' content='/assets/img/favicons/browserconfig.xml'><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/assets/img/favicons/ms-icon-144x144.png"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="cdn.jsdelivr.net"><link rel="dns-prefetch" href="cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha256-LA89z+k9fjgMKQ/kq4OO2Mrf8VltYml/VES+Rg0fh20=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous"><link rel="preload" href="/assets/css/post.css" as="style"><link rel="stylesheet" href="/assets/css/post.css"><link rel="preload" as="style" href="/assets/css/lib/bootstrap-toc.min.css"><link rel="stylesheet" href="/assets/css/lib/bootstrap-toc.min.css" /> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script> <script defer src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.15.0,npm/bootstrap@4/dist/js/bootstrap.min.js"></script> <script async src="/assets/js/post.min.js"></script> <script defer src="/app.js"></script><body data-spy="scroll" data-target="#toc"><div id="sidebar" class="d-flex flex-column"><div id="nav-wrapper"><div id="profile-wrapper" class="d-flex flex-column"><div id="avatar" class="d-flex justify-content-center"> <a href="/" alt="avatar"> <img src="/assets/img/avatar.jpeg" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="profile-text mt-3"><div class="site-title"> <a href="/">wiki</a></div><div class="site-subtitle font-italic">by fransoaardi.</div></div></div><ul class="nav flex-column"><li class="nav-item d-flex justify-content-center "> <a href="/" class="nav-link d-flex justify-content-center align-items-center w-100"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item d-flex justify-content-center "> <a href="/tabs/categories/" class="nav-link d-flex justify-content-center align-items-center w-100"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item d-flex justify-content-center "> <a href="/tabs/tags/" class="nav-link d-flex justify-content-center align-items-center w-100"> <i class="fa-fw fas fa-tags ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item d-flex justify-content-center "> <a href="/tabs/archives/" class="nav-link d-flex justify-content-center align-items-center w-100"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item d-flex justify-content-center "> <a href="/tabs/about/" class="nav-link d-flex justify-content-center align-items-center w-100"> <i class="fa-fw fas fa-info ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul></div><div class="sidebar-bottom d-flex flex-wrap justify-content-around mt-4"> <a href="https://github.com/fransoaardi" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github-alt"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['fransoaardi','gmail.com'].join('@')" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="https://www.linkedin.com/in/jong-suk-oh-690650164/" aria-label="linkedin" target="_blank" rel="noopener"> <i class="fab fa-linkedin"></i> </a></div></div><div id="topbar-wrapper" class="row justify-content-center topbar-down"><div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between"> <span id="breadcrumb"> <span> <a href="/"> Posts </a> </span> <span>elasticsearch 를 이용한 텍스트 기반 행정동/법정동 주소검색</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" placeholder="Search..."> <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper"><div id="main"><div class="row"><div id="post-wrapper" class="col-12 col-lg-11 col-xl-8"><div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><h1 data-toc-skip>elasticsearch 를 이용한 텍스트 기반 행정동/법정동 주소검색</h1><div class="post-meta text-muted d-flex flex-column"><div> Posted <span class="timeago " data-toggle="tooltip" data-placement="bottom" title="Wed, Feb 17, 2021, 10:44 AM +0900" > Feb 17 <i class="unloaded">2021-02-17T10:44:00+09:00</i> </span> by <span class="author"> fransoaardi </span></div><div> Updated <span class="timeago lastmod" data-toggle="tooltip" data-placement="bottom" title="Sat, Feb 27, 2021, 2:58 PM +0900" > Feb 27 <i class="unloaded">2021-02-27T14:58:12+09:00</i> </span></div></div><div class="post-content"><h1 id="introduction">introduction</h1><ul><li>주소검색에 대한 니즈가 생겼다. 행정동에 매핑된 데이터가 있기 때문에, 쿼리된 주소에 가장 적합한 행정동을 조회해와야 된다.<li>사용자는 행정동인지 법정동인지를 구분하지 않고 쿼리할 것이기 때문에, 이를 처리해줄 필요가 있다.<ul><li>예를들면, <code class="language-plaintext highlighter-rouge">역삼동</code> 이라고 검색을 하지만, <code class="language-plaintext highlighter-rouge">역삼동</code>은 법정동이기 때문에, 행정동인 <code class="language-plaintext highlighter-rouge">역삼1동</code> 혹은 <code class="language-plaintext highlighter-rouge">역삼2동</code> 의 데이터가 필요하다.</ul><li>좌표값을 이용할 예정은 아니고(이후에 랭킹을 위해서는 사용할수 있긴하다), 쿼리 텍스트로 변환하려고 한다.<li>elasticsearch 에 데이터를 색인하고, 이를 검색하는 방식으로 접근하기로 했다.</ul><h1 id="process">process</h1><h2 id="brainstorm">brainstorm</h2><ul><li>처음에 시행착오가 있었는데, 이미 갖고있었던 행정동 데이터를 이용해서 구축하려고 했으나, 앞서 말했던 문제점들이 예상되었다.<ul><li><code class="language-plaintext highlighter-rouge">역삼동</code> 데이터를 fuzzy 하게 찾거나 <code class="language-plaintext highlighter-rouge">역삼/동</code> 으로 tokenize 한다면 <code class="language-plaintext highlighter-rouge">역삼1동</code> 을 조회해올 수 있을거라 생각했다.<li>법정동인 <code class="language-plaintext highlighter-rouge">경상남도 양산시 신기동</code> 을 행정동인 <code class="language-plaintext highlighter-rouge">경상남도 양산시 삼성동</code> 으로 매핑해내려면, 행정/법정동 매핑데이터가 ‘반드시’ 필요하다</ul></ul><h2 id="데이터-획득">데이터 획득</h2><ul><li><p>구글링을 조금 해보니, 특이하게 법정동/행정동 데이터를 행정안전부의 <code class="language-plaintext highlighter-rouge">주민등록,인감,행정사</code> 부분에서 <a href="https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardArticle.do?bbsId=BBSMSTR_000000000052&amp;nttId=82856">데이터</a>를 구할 수 있었다.</p><li><p>말소코드가 포함된 데이터도 있지만, 말소된 지역명을 사용하진 않을 계획이라, <code class="language-plaintext highlighter-rouge">jscode20210219.zip</code> 데이터를 받아서 첨부된 excel 파일을 이용하기로 했다. (<code class="language-plaintext highlighter-rouge">KIKmix.20210219.xlsx</code>)</p></ul><h2 id="데이터-가공">데이터 가공</h2><ul><li><p><code class="language-plaintext highlighter-rouge">KIKmix.20210219.xlsx</code> 파일을 <code class="language-plaintext highlighter-rouge">pandas</code> 로 가공하기 위해서 익숙한 <code class="language-plaintext highlighter-rouge">csv</code> 포맷으로 변환해서 저장했다.</p><li><p><code class="language-plaintext highlighter-rouge">KIKmix.20210219.csv</code> 는 아래와 같은 필드들이 있는데, 이중에서 불필요한 코드들은 제거하고, <code class="language-plaintext highlighter-rouge">시도명</code>, <code class="language-plaintext highlighter-rouge">시군구명</code>, <code class="language-plaintext highlighter-rouge">읍면동명</code>, <code class="language-plaintext highlighter-rouge">동리명</code> 만 필터했다.</p></ul><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre>시도명	시군구명	읍면동명	동리명
+서울특별시			서울특별시
+서울특별시	종로구		종로구
+서울특별시	종로구	청운효자동	청운동
+서울특별시	종로구	청운효자동	신교동
+서울특별시	종로구	청운효자동	궁정동
+</pre></table></code></div></div><ul><li><p>계획은, <code class="language-plaintext highlighter-rouge">시도명/시군구명/읍면동명</code>을 이용해서 행정동을 가공하고, <code class="language-plaintext highlighter-rouge">시도명/시군구명/동리명</code> 을 이용해서 법정동을 가공하는 것이었다. 하지만 이것은 잘못된 방법이고, 아래에 계속된다.</p><li><p><code class="language-plaintext highlighter-rouge">동리명</code> 이 어떻게 끝나는지 확인하고싶어서 출력해봤는데, 특이한 데이터를 발견했다, 이 데이터는 cleansing 대상이다.</p></ul><pre><code class="language-python3">dl = raw['동리명'].values.tolist() 
+print(set([v[-1] for v in dl])) # '군', '동', ')', '구', '리', '시', '로', '가', '면', '읍'
+</code></pre><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>- `['기암리(岐岩)', '기암리(基岩)', '화산리(華山)', '화산리(花山)', '평사리(坪沙)', '평사리(平沙)']`
+</pre></table></code></div></div><ul><li><p>위에서 확인할 수 있듯, 법정동 주소가 될 <code class="language-plaintext highlighter-rouge">동리명</code> 필드는 <code class="language-plaintext highlighter-rouge">시군구읍면동로가리</code> 이렇게 광범위한 데이터가 있어서, 정리할 기준이 필요했다.</p><li>우선 아래와 같은 기준을 설정했다.<div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>시, 군, 구 &gt; 읍 면 동 == 로, 가 &gt; 리 
+(로, 가) 는 법정동에서만 등장
+</pre></table></code></div></div><li><p>따라서, <code class="language-plaintext highlighter-rouge">시군구</code>는 제거하고, <code class="language-plaintext highlighter-rouge">읍면동로가</code> 는 그대로 이용했고, <code class="language-plaintext highlighter-rouge">리</code> 의 경우에는 <code class="language-plaintext highlighter-rouge">읍면동</code>명을 <code class="language-plaintext highlighter-rouge">동리명</code> 앞에 추가해주기로 했다.</p><li>혹시나, <code class="language-plaintext highlighter-rouge">동리명</code>이 <code class="language-plaintext highlighter-rouge">읍 or 면</code> 으로 끝나는 경우, <code class="language-plaintext highlighter-rouge">읍면동</code>명과 값이 다른 필드가 있을까 하여 확인해봤는데, 다행히 그렇지 않았다.</ul><div class="language-python highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="k">print</span><span class="p">(</span><span class="s">'행/법 다른 면'</span><span class="p">,</span> <span class="n">raw</span><span class="p">[(</span><span class="n">raw</span><span class="p">[</span><span class="s">'읍면동명'</span><span class="p">].</span><span class="nb">str</span><span class="p">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">'면'</span><span class="p">))</span> <span class="o">&amp;</span>
+                <span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s">'읍면동명'</span><span class="p">]</span> <span class="o">!=</span> <span class="n">raw</span><span class="p">[</span><span class="s">'동리명'</span><span class="p">])</span> <span class="o">&amp;</span>
+                <span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s">'동리명'</span><span class="p">].</span><span class="nb">str</span><span class="p">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">'면'</span><span class="p">))])</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">'행/법 다른 읍'</span><span class="p">,</span> <span class="n">raw</span><span class="p">[(</span><span class="n">raw</span><span class="p">[</span><span class="s">'읍면동명'</span><span class="p">].</span><span class="nb">str</span><span class="p">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">'읍'</span><span class="p">))</span> <span class="o">&amp;</span>
+                <span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s">'읍면동명'</span><span class="p">]</span> <span class="o">!=</span> <span class="n">raw</span><span class="p">[</span><span class="s">'동리명'</span><span class="p">])</span> <span class="o">&amp;</span>
+                <span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s">'동리명'</span><span class="p">].</span><span class="nb">str</span><span class="p">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">'읍'</span><span class="p">))])</span>
+</pre></table></code></div></div><h2 id="데이터-색인">데이터 색인</h2><ul><li><p>데이터 가공은 했고, 색인을 위한 elasticsearch index 를 생성하였다.</p><li><p>주소에 더 적합할 tokenizer 가 있다면 더 좋았겠지만, 일단은 whitespace 로 tokenize 하는 <code class="language-plaintext highlighter-rouge">standard</code> 보다는 <code class="language-plaintext highlighter-rouge">nori_tokenizer</code> 가 더 나을것이라고 판단했다.</p><li>nori_tokenizer 는 <code class="language-plaintext highlighter-rouge">mixed</code> 로 설정해서, tokenize 되더라도 원형도 추가해서 색인하도록 했다.<li>user_dictionary 와 synonym 을 적극 활용했다.</ul><div class="language-json highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+</pre><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nl">"settings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"index"</span><span class="p">:{</span><span class="w">
+            </span><span class="nl">"analysis"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"tokenizer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"custom_tokenizer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nori_tokenizer"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"decompound_mode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mixed"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"user_dictionary"</span><span class="p">:</span><span class="w"> </span><span class="s2">"userdict_hb_search.txt"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nl">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"custom_analyzer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"tokenizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom_tokenizer"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"do_synonyms"</span><span class="p">]</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nl">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"do_synonyms"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"synonym"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"synonyms_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"synonyms_hb_search.txt"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"mappings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"hj_addr"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"analyzed"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom_analyzer"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"bj_addr"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"analyzed"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom_analyzer"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></table></code></div></div><h3 id="synonym-과-user_dictionary">synonym 과 user_dictionary</h3><ul><li>synonym, user_dictionary 설정에 대한 내용은 elasticsearch 의 document 를 참고하면 된다.<li>synonym, user_dictionary 를 사용한 이유는, 위에서 가공한 데이터는 ‘서울특별시’ 와 같이 정형화된 데이터였고, 이를 tokenizer 가 <code class="language-plaintext highlighter-rouge">'서울'+'특별시'</code> 로 나누게 될 것이기 때문이다.<li>추가로, synonym 설정을 <code class="language-plaintext highlighter-rouge">"서울특별시, 서울"</code> 와 같이 한다면, <code class="language-plaintext highlighter-rouge">서울특별시</code> 가 합성어이고, 합성어중 하나인 <code class="language-plaintext highlighter-rouge">서울</code> 까지 synonym 으로 등록을 하면 error 가 발생되는 <a href="https://github.com/elastic/elasticsearch/issues/37751">issue</a> 가 github 에 등록되어있다.<li>이 에러를 우회하는 방법으로, user_dictionary 에 등록해서 tokenize 하지 않도록 처리했다.<li>아래는 <code class="language-plaintext highlighter-rouge">"제주특별자치도, 제주, 제주도"</code> 를 등록할때의 문제가 발생한 로그이다.</ul><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>{"error":{"root_cause":[{"type":"illegal_argument_exception","reason":"failed to build synonyms"}],"type":"illegal_argument_exception","reason":"failed to build synonyms","caused_by":{"type":"parse_exception","reason":"Invalid synonym rule at line 17","caused_by":{"type":"illegal_argument_exception","reason":"term: 제주도 analyzed to a token (제주) with position increment != 1 (got: 0)"}}},"status":400}
+</pre></table></code></div></div><ul><li>synonym 작성</ul><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>서울특별시, 서울
+제주특별자치도, 제주, 제주도
+(...)
+</pre></table></code></div></div><ul><li>userdict 작성</ul><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>서울특별시
+제주특별자치도
+제주도
+(...)
+</pre></table></code></div></div><h3 id="데이터-index-에-저장">데이터 index 에 저장</h3><ul><li>elasticsearch python library 를 사용했고, pandas 의 dataframe 을 쉽고 빠르게 bulk 로 넣는 방법이 있다.</ul><pre><code class="language-python3">es = Elasticsearch(hosts=['es.host.address:9200'])  # es server
+bulk(es, documents, index='hb_search', doc_type='_doc', raise_on_error=True)
+</code></pre><h2 id="데이터-조회">데이터 조회</h2><ul><li>데이터 조회를 하기 위해 python elasticsearch library 를 이용했다.<li><code class="language-plaintext highlighter-rouge">multi_match</code> 를 이용하는게 가장 적합해 보이고, <code class="language-plaintext highlighter-rouge">type</code> 값을 여러가지로 실험해볼만하다.<li>일단, 구현 목적상 <code class="language-plaintext highlighter-rouge">hj_addr.analyzed</code>, <code class="language-plaintext highlighter-rouge">bj_addr.analyzed</code> 두개 필드에 대해 match 를 확인하는게 필요하다.<li>지금은 행정/법정 주소 필드만 갖고있는데, 다른 필드들을 추가하고, score boosting 을 변경해보는것도 방법일 것 같다.<li>다른 타입은 테스트 해보지 않았고, 기본값인 best_fields 와 most_fields 타입을 사용해보니, <code class="language-plaintext highlighter-rouge">'목동'</code> 쿼리의 예에서 볼 수 있듯, 행정/법정동 명에 동일하게 나타나는 경우 score 가 가장 높아질 수 있어, geo-spatial query 를 해도 <code class="language-plaintext highlighter-rouge">'양천구 목동'</code>을 얻어올 수 없을수도 있다고 생각했다. (물론 geo-spatial query 의 score 에 가중치를 더 주면 해결은 될 것이다)<blockquote><p><code class="language-plaintext highlighter-rouge">'목동'</code>: 중의성, <code class="language-plaintext highlighter-rouge">'대전광역시 중구 목동'</code> 행정동, 법정동 모두 <code class="language-plaintext highlighter-rouge">'목동'</code> 이라, score 가 가장 높게나옴.</p></blockquote><li>참고: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html">multi-match 관련 es document</a></ul><div class="language-python highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre><span class="n">es</span> <span class="o">=</span> <span class="n">Elasticsearch</span><span class="p">(</span><span class="n">hosts</span><span class="o">=</span><span class="p">[</span><span class="s">'es.host.address:9200'</span><span class="p">])</span>  <span class="c1"># es server
+</span>
+<span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"query"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"multi_match"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"query"</span><span class="p">:</span>      <span class="s">"역삼동"</span><span class="p">,</span>
+            <span class="s">"type"</span><span class="p">:</span>       <span class="s">"most_fields"</span><span class="p">,</span>
+            <span class="s">"fields"</span><span class="p">:</span>     <span class="p">[</span><span class="s">"hj_addr.analyzed"</span><span class="p">,</span> <span class="s">"bj_addr.analyzed"</span><span class="p">],</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">es</span><span class="p">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s">"hb_search"</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">f'Got </span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="s">"hits"</span><span class="p">][</span><span class="s">"total"</span><span class="p">][</span><span class="s">"value"</span><span class="p">]</span><span class="si">}</span><span class="s"> Hits:'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s">'hits'</span><span class="p">][</span><span class="s">'hits'</span><span class="p">]:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">f"</span><span class="si">{</span><span class="n">hit</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</pre></table></code></div></div><ul><li>result (원하는대로 나오긴 한다)</ul><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre>Got 4 Hits:
+{'_index': 'hb_search', '_type': '_doc', '_id': '6sVqqXcBX30-OeLucJQ-', '_score': 25.360394, '_source': {'hj_addr': '서울특별시 강남구 역삼1동', 'bj_addr': '서울특별시 강남구 역삼동'}}
+{'_index': 'hb_search', '_type': '_doc', '_id': '68VqqXcBX30-OeLucJQ-', '_score': 25.360394, '_source': {'hj_addr': '서울특별시 강남구 역삼2동', 'bj_addr': '서울특별시 강남구 역삼동'}}
+{'_index': 'hb_search', '_type': '_doc', '_id': 'm8VqqXcBX30-OeLucqA4', '_score': 20.924463, '_source': {'hj_addr': '경기도 용인시 처인구 역삼동', 'bj_addr': '경기도 용인시 처인구 역북동'}}
+{'_index': 'hb_search', '_type': '_doc', '_id': 'nMVqqXcBX30-OeLucqA4', '_score': 20.924463, '_source': {'hj_addr': '경기도 용인시 처인구 역삼동', 'bj_addr': '경기도 용인시 처인구 삼가동'}}
+
+</pre></table></code></div></div><h1 id="결과와-개선이-필요한-부분">결과와 개선이 필요한 부분</h1><ul><li>아직 완벽한 솔루션이 아니다. 일단은 feasibility check 를 해보고 싶었던 부분인데, 접근 방식은 적절한것 같다.<li>형태소분석기(tokenizer), 동의어(synonym), 사용자사전(user_dictionary) 쪽에 개선할만한 부분이 있어보인다.<ul><li>도/시/구/동 등을 stopword 처리한다면 어떨까?<li>동의어, 사용자사전 처리가 더 정교하게 된다면 어떨까?</ul><li><code class="language-plaintext highlighter-rouge">'종로구 창신제1동'</code> 을 다른 dataset 에서는 <code class="language-plaintext highlighter-rouge">'창신1동'</code> 으로 사용할 가능성이 높아보인다. (기존 dataset 과 병합문제)<li>위의 <code class="language-plaintext highlighter-rouge">'역삼동'</code> 의 예에서, 중의성 문제가 발생한다. 이후에 대표 좌표를 매핑해서, geospatial querying 으로 re-rank 를 하는 방법이 필요해보인다.<li>도로명 처리의 경우 아직 데이터셋을 확보하지 못했고, 방법을 생각해보지 못했다.<ul><li>도로명의 경우, <code class="language-plaintext highlighter-rouge">'도로'</code>를 기준으로 하고, 도로가 행정경계를 넘나드는 경우가 있을것이라, 아직 조사해보진 않았다.</ul></ul><h2 id="검증-예시">검증 예시</h2><ul><li><code class="language-plaintext highlighter-rouge">'목동'</code>: 중의성, <code class="language-plaintext highlighter-rouge">'대전광역시 중구 목동'</code> 행정동, 법정동 모두 <code class="language-plaintext highlighter-rouge">'목동'</code> 이라, score 가 가장 높게나옴.<li><code class="language-plaintext highlighter-rouge">'호곡리'</code>: 중의성, 원했던 데이터는 우정읍 까지인데, <code class="language-plaintext highlighter-rouge">'리'</code> 데이터까지 포함해서 대응할 수 있게함<li><code class="language-plaintext highlighter-rouge">'제주도 애월'</code>: 아직 <code class="language-plaintext highlighter-rouge">'제주'</code> 와 <code class="language-plaintext highlighter-rouge">'제주도'</code>를 synonym 처리를 안해서 그런지, <code class="language-plaintext highlighter-rouge">'제주 애월'</code>과 다르게 검색결과를 찾지 못함<li><code class="language-plaintext highlighter-rouge">'세종시'</code>: dictionary 추가 안해서 그런지, 검색결과가 상이함</ul><h1 id="appendix">appendix</h1><ul><li>elasticsearch 에반젤리스트인 <a href="https://esbook.kimjmin.net/06-text-analysis">김종민님의 도큐먼트</a> 와 <a href="http://kimjmin.net/2019/08/2019-08-how-to-analyze-korean/">지하철 노선 관련 한글 형태소분석 글</a> 참고하며 알게된 api 내용을 정리한다.</ul><h2 id="analyze-api">analyze api</h2><ul><li>아래와 같이 query 에 대해 어떻게 analyze 될지에 대한 REST API 가 제공된다.<li>api endpoint 를 보면 <code class="language-plaintext highlighter-rouge">hb_search</code> index 에 <code class="language-plaintext highlighter-rouge">_analyze</code> 를 한 것인데, index 명시 없이 es 에 _analyze 요청을 할 수도 있지만, <code class="language-plaintext highlighter-rouge">custom_analyzer</code> 는 <code class="language-plaintext highlighter-rouge">hb_search</code> index 에 생성한 analyzer 이므로, 분석이 안될것이고, <code class="language-plaintext highlighter-rouge">standard</code> 혹은 <code class="language-plaintext highlighter-rouge">nori</code> 와 같이 custom 하지 않은, plugin 으로 설치된 것들로만 분석 가능할것이다.<li>아래 예시는 <code class="language-plaintext highlighter-rouge">'서울특별시 관악구 신림1동'</code> 에 대한 분석 결과인데, 위의 index 생성시, <code class="language-plaintext highlighter-rouge">"decompound_mode": "mixed",</code> 로 설정했기 때문에, <code class="language-plaintext highlighter-rouge">'관악구'</code> 가 <code class="language-plaintext highlighter-rouge">'관악+구'</code>이기 때문에, <code class="language-plaintext highlighter-rouge">'관악'</code>, <code class="language-plaintext highlighter-rouge">'구'</code>, <code class="language-plaintext highlighter-rouge">'관악구'</code> 이렇게 3가지 token 이 생성된것을 확인할 수 있다.<li><code class="language-plaintext highlighter-rouge">'서울특별시'</code> 부분은 <code class="language-plaintext highlighter-rouge">user_dictionary</code> 에 포함된 단어라서 tokenize 되지 않았고, 아래 synonym 처리시, synonym 에 <code class="language-plaintext highlighter-rouge">서울특별시</code> 와 <code class="language-plaintext highlighter-rouge">서울</code> 을 동의어 처리 해놨기 때문에, <code class="language-plaintext highlighter-rouge">서울특별시</code>, <code class="language-plaintext highlighter-rouge">서울</code> 토큰이 둘다 생성된것을 확인할 수 있다.</ul><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+</pre><td class="rouge-code"><pre>curl 'http://es.host.address:9200/hb_search/_analyze' \
+-H 'Content-Type: application/json' \
+-d '{
+    "analyzer": "custom_analyzer",
+    "text": "서울특별시 관악구 신림1동",
+    "explain": true
+}' | jq
+
+{
+  "detail": {
+    "custom_analyzer": true,
+    "charfilters": [],
+    "tokenizer": {
+      "name": "custom_tokenizer",
+      "tokens": [
+        {
+          "token": "서울특별시",
+          "start_offset": 0,
+          "end_offset": 5,
+          "type": "word",
+          "position": 0,
+          "bytes": "[ec 84 9c ec 9a b8 ed 8a b9 eb b3 84 ec 8b 9c]",
+          "leftPOS": "NNG(General Noun)",
+          "morphemes": null,
+          "posType": "MORPHEME",
+          "positionLength": 1,
+          "reading": null,
+          "rightPOS": "NNG(General Noun)",
+          "termFrequency": 1
+        },
+        {
+          "token": "관악구",
+          "start_offset": 6,
+          "end_offset": 9,
+          "type": "word",
+          "position": 1,
+          "positionLength": 2,
+          "bytes": "[ea b4 80 ec 95 85 ea b5 ac]",
+          "leftPOS": "NNP(Proper Noun)",
+          "morphemes": "관악/NNP(Proper Noun)+구/NNG(General Noun)",
+          "posType": "COMPOUND",
+          "reading": null,
+          "rightPOS": "NNP(Proper Noun)",
+          "termFrequency": 1
+        },
+        {
+          "token": "관악",
+          "start_offset": 6,
+          "end_offset": 8,
+          "type": "word",
+          "position": 1,
+          "bytes": "[ea b4 80 ec 95 85]",
+          "leftPOS": "NNP(Proper Noun)",
+          "morphemes": null,
+          "posType": "MORPHEME",
+          "positionLength": 1,
+          "reading": null,
+          "rightPOS": "NNP(Proper Noun)",
+          "termFrequency": 1
+        },
+        {
+          "token": "구",
+          "start_offset": 8,
+          "end_offset": 9,
+          "type": "word",
+          "position": 2,
+          "bytes": "[ea b5 ac]",
+          "leftPOS": "NNG(General Noun)",
+          "morphemes": null,
+          "posType": "MORPHEME",
+          "positionLength": 1,
+          "reading": null,
+          "rightPOS": "NNG(General Noun)",
+          "termFrequency": 1
+        },
+        {
+          "token": "신림",
+          "start_offset": 10,
+          "end_offset": 12,
+          "type": "word",
+          "position": 3,
+          "bytes": "[ec 8b a0 eb a6 bc]",
+          "leftPOS": "NNG(General Noun)",
+          "morphemes": null,
+          "posType": "MORPHEME",
+          "positionLength": 1,
+          "reading": null,
+          "rightPOS": "NNG(General Noun)",
+          "termFrequency": 1
+        },
+        {
+          "token": "1",
+          "start_offset": 12,
+          "end_offset": 13,
+          "type": "word",
+          "position": 4,
+          "bytes": "[31]",
+          "leftPOS": "SN(Number)",
+          "morphemes": null,
+          "posType": "MORPHEME",
+          "positionLength": 1,
+          "reading": null,
+          "rightPOS": "SN(Number)",
+          "termFrequency": 1
+        },
+        {
+          "token": "동",
+          "start_offset": 13,
+          "end_offset": 14,
+          "type": "word",
+          "position": 5,
+          "bytes": "[eb 8f 99]",
+          "leftPOS": "NNBC(Dependent noun)",
+          "morphemes": null,
+          "posType": "MORPHEME",
+          "positionLength": 1,
+          "reading": null,
+          "rightPOS": "NNBC(Dependent noun)",
+          "termFrequency": 1
+        }
+      ]
+    },
+    "tokenfilters": [
+      {
+        "name": "do_synonyms",
+        "tokens": [
+          {
+            "token": "서울특별시",
+            "start_offset": 0,
+            "end_offset": 5,
+            "type": "word",
+            "position": 0,
+            "bytes": "[ec 84 9c ec 9a b8 ed 8a b9 eb b3 84 ec 8b 9c]",
+            "leftPOS": "NNG(General Noun)",
+            "morphemes": null,
+            "posType": "MORPHEME",
+            "positionLength": 1,
+            "reading": null,
+            "rightPOS": "NNG(General Noun)",
+            "termFrequency": 1
+          },
+          {
+            "token": "서울",
+            "start_offset": 0,
+            "end_offset": 5,
+            "type": "SYNONYM",
+            "position": 0,
+            "bytes": "[ec 84 9c ec 9a b8]",
+            "leftPOS": null,
+            "morphemes": null,
+            "posType": null,
+            "positionLength": 1,
+            "reading": null,
+            "rightPOS": null,
+            "termFrequency": 1
+          },
+          {
+            "token": "관악구",
+            "start_offset": 6,
+            "end_offset": 9,
+            "type": "word",
+            "position": 1,
+            "positionLength": 2,
+            "bytes": "[ea b4 80 ec 95 85 ea b5 ac]",
+            "leftPOS": "NNP(Proper Noun)",
+            "morphemes": "관악/NNP(Proper Noun)+구/NNG(General Noun)",
+            "posType": "COMPOUND",
+            "reading": null,
+            "rightPOS": "NNP(Proper Noun)",
+            "termFrequency": 1
+          },
+          {
+            "token": "관악",
+            "start_offset": 6,
+            "end_offset": 8,
+            "type": "word",
+            "position": 1,
+            "bytes": "[ea b4 80 ec 95 85]",
+            "leftPOS": "NNP(Proper Noun)",
+            "morphemes": null,
+            "posType": "MORPHEME",
+            "positionLength": 1,
+            "reading": null,
+            "rightPOS": "NNP(Proper Noun)",
+            "termFrequency": 1
+          },
+          {
+            "token": "구",
+            "start_offset": 8,
+            "end_offset": 9,
+            "type": "word",
+            "position": 2,
+            "bytes": "[ea b5 ac]",
+            "leftPOS": "NNG(General Noun)",
+            "morphemes": null,
+            "posType": "MORPHEME",
+            "positionLength": 1,
+            "reading": null,
+            "rightPOS": "NNG(General Noun)",
+            "termFrequency": 1
+          },
+          {
+            "token": "신림",
+            "start_offset": 10,
+            "end_offset": 12,
+            "type": "word",
+            "position": 3,
+            "bytes": "[ec 8b a0 eb a6 bc]",
+            "leftPOS": "NNG(General Noun)",
+            "morphemes": null,
+            "posType": "MORPHEME",
+            "positionLength": 1,
+            "reading": null,
+            "rightPOS": "NNG(General Noun)",
+            "termFrequency": 1
+          },
+          {
+            "token": "1",
+            "start_offset": 12,
+            "end_offset": 13,
+            "type": "word",
+            "position": 4,
+            "bytes": "[31]",
+            "leftPOS": "SN(Number)",
+            "morphemes": null,
+            "posType": "MORPHEME",
+            "positionLength": 1,
+            "reading": null,
+            "rightPOS": "SN(Number)",
+            "termFrequency": 1
+          },
+          {
+            "token": "동",
+            "start_offset": 13,
+            "end_offset": 14,
+            "type": "word",
+            "position": 5,
+            "bytes": "[eb 8f 99]",
+            "leftPOS": "NNBC(Dependent noun)",
+            "morphemes": null,
+            "posType": "MORPHEME",
+            "positionLength": 1,
+            "reading": null,
+            "rightPOS": "NNBC(Dependent noun)",
+            "termFrequency": 1
+          }
+        ]
+      }
+    ]
+  }
+}
+</pre></table></code></div></div><h2 id="termvector-api">termvector api</h2><ul><li>위 analyze api 처럼 query 를 직접 analyze 해보는 방법도 있지만, 기존에 색인된 document 를 확인하고 싶을때, <code class="language-plaintext highlighter-rouge">_termvectors</code> api 를 이용할 수 있다.<li>url 의 query 부분을 보면 fields 에 <code class="language-plaintext highlighter-rouge">,</code>로 여러 필드를 요청할 수 있다.<li>아래 예시의 <code class="language-plaintext highlighter-rouge">QsVqqXcBX30-OeLufub3</code> 는 document 의 <code class="language-plaintext highlighter-rouge">_id</code> 이다.</ul><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+</pre><td class="rouge-code"><pre>curl 'http://es.host.address:9200/hb_search/_termvectors/QsVqqXcBX30-OeLufub3?fields=bj_addr.analyzed' | jq
+  
+{
+  "_index": "hb_search",
+  "_type": "_doc",
+  "_id": "QsVqqXcBX30-OeLufub3",
+  "_version": 1,
+  "found": true,
+  "took": 0,
+  "term_vectors": {
+    "bj_addr.analyzed": {
+      "field_statistics": {
+        "sum_doc_freq": 229626,
+        "doc_count": 21725,
+        "sum_ttf": 232031
+      },
+      "terms": {
+        "리": {
+          "term_freq": 1,
+          "tokens": [
+            {
+              "position": 6,
+              "start_offset": 18,
+              "end_offset": 19
+            }
+          ]
+        },
+        "시": {
+          "term_freq": 1,
+          "tokens": [
+            {
+              "position": 2,
+              "start_offset": 10,
+              "end_offset": 11
+            }
+          ]
+        },
+        "월령": {
+          "term_freq": 1,
+          "tokens": [
+            {
+              "position": 5,
+              "start_offset": 16,
+              "end_offset": 18
+            }
+          ]
+        },
+        "월령리": {
+          "term_freq": 1,
+          "tokens": [
+            {
+              "position": 5,
+              "start_offset": 16,
+              "end_offset": 19
+            }
+          ]
+        },
+        "읍": {
+          "term_freq": 1,
+          "tokens": [
+            {
+              "position": 4,
+              "start_offset": 14,
+              "end_offset": 15
+            }
+          ]
+        },
+        "제주": {
+          "term_freq": 2,
+          "tokens": [
+            {
+              "position": 0,
+              "start_offset": 0,
+              "end_offset": 7
+            },
+            {
+              "position": 1,
+              "start_offset": 8,
+              "end_offset": 10
+            }
+          ]
+        },
+        "제주도": {
+          "term_freq": 2,
+          "tokens": [
+            {
+              "position": 0,
+              "start_offset": 0,
+              "end_offset": 7
+            },
+            {
+              "position": 1,
+              "start_offset": 8,
+              "end_offset": 10
+            }
+          ]
+        },
+        "제주시": {
+          "term_freq": 1,
+          "tokens": [
+            {
+              "position": 1,
+              "start_offset": 8,
+              "end_offset": 11
+            }
+          ]
+        },
+        "제주특별자치도": {
+          "term_freq": 2,
+          "tokens": [
+            {
+              "position": 0,
+              "start_offset": 0,
+              "end_offset": 7
+            },
+            {
+              "position": 1,
+              "start_offset": 8,
+              "end_offset": 10
+            }
+          ]
+        },
+        "한림": {
+          "term_freq": 1,
+          "tokens": [
+            {
+              "position": 3,
+              "start_offset": 12,
+              "end_offset": 14
+            }
+          ]
+        },
+        "한림읍": {
+          "term_freq": 1,
+          "tokens": [
+            {
+              "position": 3,
+              "start_offset": 12,
+              "end_offset": 15
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+</pre></table></code></div></div><h2 id="index-analysis-setting-관련">index: analysis setting 관련</h2><ul><li><code class="language-plaintext highlighter-rouge">analysis</code> 필드는 <code class="language-plaintext highlighter-rouge">settings.index</code> 하위에 들어가고, <code class="language-plaintext highlighter-rouge">tokenizer</code>, <code class="language-plaintext highlighter-rouge">analyzer</code>, <code class="language-plaintext highlighter-rouge">filter</code>, <code class="language-plaintext highlighter-rouge">char_filter</code> 를 적용할 수 있다. 각각에 대한 자세한 내용은 위에서 언급한 김종민님의 도큐먼트와 es 공식 document 확인하는것이 좋다.<li>이해한 바로는, 결국 <code class="language-plaintext highlighter-rouge">analyzer</code> 를 정의하기 위함인데, <code class="language-plaintext highlighter-rouge">analyzer</code> 는 <code class="language-plaintext highlighter-rouge">char_filter</code>, <code class="language-plaintext highlighter-rouge">tokenizer</code>, <code class="language-plaintext highlighter-rouge">filter</code> 과정의 통칭이다.<li><p><code class="language-plaintext highlighter-rouge">char_filter -&gt; tokenizer -&gt; filter</code> 순으로 적용된다.</p><li>출처: <a href="https://esbook.kimjmin.net/06-text-analysis/6.2-text-analysis">김종민님의 document</a></ul><blockquote><p>Elasticsearch는 문자열 필드가 저장될 때 데이터에서 검색어 토큰을 저장하기 위해 여러 단계의 처리 과정을 거칩니다. 이 전체 과정을 텍스트 분석(Text Analysis) 이라고 하고 이 과정을 처리하는 기능을 애널라이저(Analyzer) 라고 합니다. Elasticsearch의 애널라이저는 0~3개의 캐릭터 필터(Character Filter)와 1개의 토크나이저(Tokenizer), 그리고 0~n개의 토큰 필터(Token Filter)로 이루어집니다.</p></blockquote><ul><li><code class="language-plaintext highlighter-rouge">filter</code> 는 list 로 정의 가능한데, list 에 담긴 순서대로 적용된다. (<code class="language-plaintext highlighter-rouge">filter</code> 는 순서가 있다.)<li><code class="language-plaintext highlighter-rouge">mappings</code> 필드에는, index 에 정의한 analyzer 를 적용할 필드를 명시했다. <code class="language-plaintext highlighter-rouge">fields</code> 를 정의해서, <code class="language-plaintext highlighter-rouge">analyzed</code> 라는 필드를 추가하고, raw data(<code class="language-plaintext highlighter-rouge">hj_addr</code>) 는 유지한체, <code class="language-plaintext highlighter-rouge">hj_addr.analyzed</code> 라는 필드를 정의해서, <code class="language-plaintext highlighter-rouge">custom_analyzer</code> 를 적용했다.<li>user_dictionary 와 synonyms_path 는 <code class="language-plaintext highlighter-rouge">$ES_PATH_CONF</code> 의 상대경로로 지정하는데, rpm 으로 설치한 es 는 <code class="language-plaintext highlighter-rouge">/etc/sysconfig/elasticsearch</code> 에 명시되어있었다.</ul><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre># Elasticsearch configuration directory
+ES_PATH_CONF=/etc/elasticsearch
+</pre></table></code></div></div><div class="language-json highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+</pre><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nl">"settings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"index"</span><span class="p">:{</span><span class="w">
+            </span><span class="nl">"analysis"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"tokenizer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"custom_tokenizer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nori_tokenizer"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"decompound_mode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mixed"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"user_dictionary"</span><span class="p">:</span><span class="w"> </span><span class="s2">"userdict_hb_search.txt"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nl">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"custom_analyzer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"tokenizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom_tokenizer"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"do_synonyms"</span><span class="p">]</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nl">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"do_synonyms"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"synonym"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"synonyms_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"synonyms_hb_search.txt"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"mappings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"hj_addr"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"analyzed"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom_analyzer"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"bj_addr"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"analyzed"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w">
+                        </span><span class="nl">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom_analyzer"</span><span class="w">
+                    </span><span class="p">}</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></table></code></div></div><h1 id="references">references</h1><ul><li><a href="https://esbook.kimjmin.net/06-text-analysis/6.2-text-analysis">김종민님의 document</a><li><a href="https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardArticle.do?bbsId=BBSMSTR_000000000052&amp;nttId=82856">행정동/법정동 데이터</a><li><a href="http://kimjmin.net/2019/08/2019-08-how-to-analyze-korean/">지하철 노선 관련 한글 형태소분석 글</a><li><a href="https://github.com/elastic/elasticsearch/issues/37751">nori tokenizer 사용시 발생한 issue</a></ul></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/project/'>Project</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/elk/" class="post-tag no-text-decoration" >elk</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <i class="fa-fw fas fa-link small" onclick="copyLink()" data-toggle="tooltip" data-placement="top" title="Copy link"></i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted topbar-down"><div class="access"><div id="access-lastmod" class="post"> <span>Recent Update</span><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/posts/uber_go_style_guide_1/">Uber go style guide (1)</a><li><a href="/posts/naver_search_colloquium/">Naver Search Colloquium 후기</a><li><a href="/posts/k8s_docker_deprecated/">k8s 가 container runtime 로 docker 지원을 중단</a><li><a href="/posts/mlsys_2_mlflow/">MLflow: Stanford MLSys Seminar Episode 2</a><li><a href="/posts/applying_ilm_kibana_opendistro/">kibana & opendistro index lifecycle management(ilm) 적용하기</a></ul></div><div id="access-tags"> <span>Tags</span><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/golang/">golang</a> <a class="post-tag" href="/tags/aws/">aws</a> <a class="post-tag" href="/tags/elk/">elk</a> <a class="post-tag" href="/tags/style-guide/">style guide</a> <a class="post-tag" href="/tags/ir/">ir</a> <a class="post-tag" href="/tags/k8s/">k8s</a> <a class="post-tag" href="/tags/ai/">ai</a> <a class="post-tag" href="/tags/algorithm/">algorithm</a> <a class="post-tag" href="/tags/api-gateway/">api gateway</a> <a class="post-tag" href="/tags/certmanager/">certmanager</a></div></div></div><div id="toc-wrapper" class="pl-0 pr-4 mb-5"> <span class="pl-3 pt-2 mb-2">Contents</span><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div class="col-12 col-lg-11 col-xl-8"><div id="post-extend-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><div id="disqus" class="pt-2 pb-2"><p class="font-italic text-center text-muted small"> Comments powered by <a href="https://disqus.com/">Disqus</a>.</p></div><script src="/assets/js/lib/jquery.disqusloader.min.js"></script> <script> var options = { scriptUrl: '//fransoaardi.disqus.com/embed.js', disqusConfig: function() { this.page.url = 'https://fransoaardi.github.io/posts/address_search/'; this.page.identifier = '/posts/address_search/'; } }; $.disqusLoader('#disqus', options); </script><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/applying_ilm_kibana_opendistro/"><div class="card-body"> <span class="timeago small" > Dec 14, 2020 <i class="unloaded">2020-12-14T14:00:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>kibana & opendistro index lifecycle management(ilm) 적용하기</h3><div class="text-muted small"><p> changelog 2020-12-14: 문서작성 2021-04-06: es, opendistro ilm 관련 API 경로 차이 관련 내용 추가 introduction 본 글은 kibana &amp; opendistro 에 ilm rule 적용을 다룬다. AWS elasticsearch service SaaS(Service as...</p></div></div></a></div><div class="card"> <a href="/posts/elasticsearch_shard/"><div class="card-body"> <span class="timeago small" > Jan 5 <i class="unloaded">2021-01-05T01:50:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>elasticsearch shard limit</h3><div class="text-muted small"><p> introduction AWS 에서 제공하는 elasticsearch service(opendistro) 를 사용하고있다. index template 을 정의해두고, daily index 를 생성하며 사용하고있다. 로그가 집계가 되고 있지 않은것 같아서, 인덱스를 확인해보니 오늘 날짜 인덱스가 생성되지 않았다. { "error" :...</p></div></div></a></div><div class="card"> <a href="/posts/url_shortener/"><div class="card-body"> <span class="timeago small" > Mar 19 <i class="unloaded">2021-03-19T19:52:00+09:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>단축 url 서비스 개발</h3><div class="text-muted small"><p> introduction TMI: 예전에 kakaopay 개발자 채용때 단축 url 제작 과제를 받았다가 떨어진 적이 있다. 솔직히 탈락이 당연했다. 그때 부끄럽게 구현했던 생각도 나고, 2020년 연말에 갑자기 무료하기도 하고, 사내 시스템으로 제공하면 괜찮다는 생각으로 개발을 시작하게 되었다. 이 글은,...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/aws_ebs_volume_mount/" class="btn btn-outline-primary"><p>AWS EBS volume mount</p></a> <a href="/posts/go_maintain_compatibility/" class="btn btn-outline-primary"><p>go api 호환성(compatibility)을 유지하기 위한 방법들</p></a></div></div></div></div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script> <script type="text/javascript"> const imgs = document.querySelectorAll('#post-wrapper img'); const observer = lozad(imgs); observer.observe(); </script><footer class="d-flex w-100 justify-content-center"><div class="d-flex justify-content-between align-items-center"><div class="footer-left"><p class="mb-0"> © 2021 <a href="https://github.com/fransoaardi">fransoaardi</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy/" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-xl-11 post-content"><div id="search-hints"><h4 class="text-muted mb-4">Tags</h4><a class="post-tag" href="/tags/golang/">golang</a> <a class="post-tag" href="/tags/aws/">aws</a> <a class="post-tag" href="/tags/elk/">elk</a> <a class="post-tag" href="/tags/style-guide/">style guide</a> <a class="post-tag" href="/tags/ir/">ir</a> <a class="post-tag" href="/tags/k8s/">k8s</a> <a class="post-tag" href="/tags/ai/">ai</a> <a class="post-tag" href="/tags/algorithm/">algorithm</a> <a class="post-tag" href="/tags/api-gateway/">api gateway</a> <a class="post-tag" href="/tags/certmanager/">certmanager</a></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a> <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.7.3/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="https://fransoaardi.github.io{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"><div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>{categories}</div><div><i class="fa fa-tag fa-fw"></i>{tags}</div></div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>' }); </script>
