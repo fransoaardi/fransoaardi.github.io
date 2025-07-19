@@ -17,7 +17,7 @@ comments: true
 ## Configurations
 
 최근에 사용하며 마음이 편안한 `uv` 라는 통해 `pip` command 를 실행하고 `litserve` 를 설치한다.
-```
+```bash
 $ mkdir testmlops
 $ uv venv
 $ uv pip install litserve
@@ -26,7 +26,7 @@ $ uv pip install git+https://github.com/lgai-exaone/transformers@add-exaone4
 
 ## Code
 
-```
+```bash
 $ tree 
 .
 ├── client.py
@@ -105,10 +105,10 @@ if __name__ == "__main__":
 ```bash
 $ uv run server.py
 (...)
-$ uv run client.py "임진왜란은 언제 일어났어? 일찍 일어났어?"
+$ uv run client.py "임진왜란은 언제일어났니? 일찍일어났어?"
 Status: 200
 Response:
- {"output":"[|user|]\n임진왜란은 언제일어났어? 일찍일어났어?[|endofturn|]\n[|assistant|]\n<think>\n\n</think>\n\n임진왜란은 대략 **1592년 1월~1598년 10월** 사이에 일어났습니다.  \n\n- **Earliest 시작**: 임진왜란의 본격적인 시작은 1592년 1월 13일(월)에 조선과 일본 사이에 전쟁이 발발했습니다.  \n- **Earliest 발발일**: 역사적 기록과 사료를 종합할 때, 임진왜란은 1592년 초경에 시작되었다고 보는 것이 일반적입니다.  \n\n따라서 \"일찍 일어났다\"고"}
+ {"output":"[|user|]\n임진왜란은 언제일어났니? 일찍일어났어?[|endofturn|]\n[|assistant|]\n<think>\n\n</think>\n\n임진왜란은 대략 **1592년 1월~1598년 10월** 사이에 일어났습니다.  \n\n- **시작(1592년 1월)**: 조선의 대표적인 장군인 권율이 이끄는 왜군이 일본에 침공했습니다.  \n- **종말(1598년 10월)**: 왜군이 패하고 조선이 회복되기 시작했습니다.  \n\n따라서 임진왜란은 **\"일찍\"이라고 보기 어렵습니다**. 고려 말~조선 초기(15"}
 ```
 
 처음 써보는 라이브러리였지만 생각보다 수월하게 서빙해볼 수 있었다. 
